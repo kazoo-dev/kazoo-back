@@ -2,9 +2,11 @@ package kazoo.pitch;
 
 public class NSDFArray {
     private final double[] array;
+    public int length;
 
     public NSDFArray(double[] array) {
         this.array = array;
+        this.length = array.length;
     }
 
     public boolean esCrucePositivo(int posicion) {
@@ -35,5 +37,9 @@ public class NSDFArray {
 
         double delta = valorAnterior - valorSiguiente;
         return new double[] { indice + delta / (2 * fondo), valorActual - Math.pow(delta, 2) / (8 * fondo) };
+    }
+
+    public double get(Integer posicion) {
+        return this.array[posicion];
     }
 }

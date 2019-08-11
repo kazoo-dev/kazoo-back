@@ -7,11 +7,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.offset;
 
 public class McLeodPitchMethodTests {
-    private Foo metodoDeteccion;
+    private AlgoritmoDeMcLeod metodoDeteccion;
 
     @Before
     public void setup() {
-        this.metodoDeteccion = new Foo(44100);
+        this.metodoDeteccion = new AlgoritmoDeMcLeod(44100);
     }
 
     @Test
