@@ -1,5 +1,6 @@
 package kazoo.pitch;
 
+import org.assertj.core.data.Percentage;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -8,10 +9,12 @@ import static org.assertj.core.api.Assertions.offset;
 
 public class McLeodPitchMethodTests {
     private AlgoritmoDeMcLeod metodoDeteccion;
+    private int frecuenciaDeMuestreo;
 
     @Before
     public void setup() {
-        this.metodoDeteccion = new AlgoritmoDeMcLeod(44100);
+        this.frecuenciaDeMuestreo = 44100;
+        this.metodoDeteccion = new AlgoritmoDeMcLeod(this.frecuenciaDeMuestreo);
     }
 
     @Test
@@ -47,12 +50,23 @@ public class McLeodPitchMethodTests {
     @Test
     public void estimaLaAlturaDeUnaOndaSinusoidalConUn1PorcientoDeErrorYUn99PorcientoDeClaridad() {
         int la4 = 440;
-
+        ResultadoDeDeteccion resultadoDeDeteccion = this.metodoDeteccion.estimarAltura(this.ondaSinusoidal(la4, 1000));
+        assertThat(resultadoDeDeteccion.getAltura()).isCloseTo(la4, Percentage.withPercentage(1));
+        assertThat(resultadoDeDeteccion.getProbabilidad()).isGreaterThanOrEqualTo(0.99);
     }
 
     private void assertCorrelates(double[] correlaciones, double[] correlacionesEsperadas) {
         for(int i=0; i<correlaciones.length; i++) {
             assertThat(correlaciones[i]).isCloseTo(correlacionesEsperadas[i], offset(0.0000000000001));
         }
+    }
+
+    private double[] ondaSinusoidal(double altura, int periodo) {
+        double frecuencia = altura / this.frecuenciaDeMuestreo;
+        double[] amplitudes = new double[periodo];
+        for (int i=0; i < periodo; i++) {
+            amplitudes[i] = Math.sin(2 * Math.PI * frecuencia * i);
+        }
+        return amplitudes;
     }
 }
