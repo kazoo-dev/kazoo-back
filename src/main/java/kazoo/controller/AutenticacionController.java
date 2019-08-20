@@ -5,21 +5,16 @@ import kazoo.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
 
 @RestController
-@RequestMapping(value = AutenticacionController.AutenticacionControllerBasePath)
 public class AutenticacionController {
-
-    static final String AutenticacionControllerBasePath = "/usuario";
 
     @Autowired
     private UsuarioService usuarioService;
 
-    @RequestMapping(value = "/registrar", method = RequestMethod.POST)
+    @PostMapping(path = Endpoints.Autenticacion.REGISTRAR)
     public ResponseEntity crearUsuario(@RequestBody Usuario usuario){
         usuarioService.registrarUsuario(usuario);
         return new ResponseEntity(HttpStatus.OK);
