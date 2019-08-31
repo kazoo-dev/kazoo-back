@@ -15,11 +15,18 @@ public class UsuarioService {
     UsuarioRepository usuarioRepository;
 
     public void registrarUsuario(Usuario usuario){
+        validarUsuarioYContrasenia(usuario);
         SHA512Hasher sha512Hasher = new SHA512Hasher();
         usuario.setSalt(sha512Hasher.generateSalt());
         usuario.setClave(sha512Hasher.hash(usuario.getClave(), usuario.getSalt()));
         validarQueNoExisteElUsuario(usuario);
         usuarioRepository.save(usuario);
+    }
+
+    private void validarUsuarioYContrasenia(Usuario usuario) {
+        if(usuario.getNombre() == null || usuario.getClave()==null){
+            throw new RuntimeException("Ni el nombre de usuario ni la contraseña pueden ser vacíos");
+        }
     }
 
     private void validarQueNoExisteElUsuario(Usuario usuario) throws RuntimeException {
