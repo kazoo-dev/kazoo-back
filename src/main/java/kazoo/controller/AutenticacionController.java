@@ -1,5 +1,6 @@
 package kazoo.controller;
 
+import kazoo.model.Sesion;
 import kazoo.model.Usuario;
 import kazoo.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,11 @@ public class AutenticacionController {
     public ResponseEntity crearUsuario(@RequestBody Usuario usuario){
         usuarioService.registrarUsuario(usuario);
         return new ResponseEntity(HttpStatus.OK);
+    }
+
+    @PostMapping(path = Endpoints.Autenticacion.LOGIN)
+    public Sesion login(@RequestBody Usuario usuario){
+        return usuarioService.loguearUsuario(usuario);
     }
 }
 
