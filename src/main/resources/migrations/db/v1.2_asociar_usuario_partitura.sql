@@ -1,0 +1,1 @@
+ALTER TABLE partitura ADD CONSTRAINT partitura_fk FOREIGN KEY (usuario_id) REFERENCES usuario;

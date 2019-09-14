@@ -1,14 +1,11 @@
 package kazoo.model;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 @Entity
 public class Usuario {
@@ -24,6 +21,10 @@ public class Usuario {
     private String clave;
     @JsonIgnore
     private byte[] salt;
+
+    @OneToMany(mappedBy = "usuario")
+    private List<Partitura> partituras;
+
 
     public void setNombre(String nombre) {
         this.nombre = nombre;
@@ -48,6 +49,10 @@ public class Usuario {
 
     public byte[] getSalt() {
         return salt;
+    }
+
+    public List<Partitura> getPartituras() {
+        return partituras;
     }
 }
 
