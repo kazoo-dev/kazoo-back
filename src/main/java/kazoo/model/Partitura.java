@@ -26,4 +26,18 @@ public class Partitura {
         this.notas = notas;
         this.nombre = nombre;
     }
+
+    public Partitura() {}
+
+    public void setNotas(String notas) {
+        this.notas = notas;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
+    }
 }

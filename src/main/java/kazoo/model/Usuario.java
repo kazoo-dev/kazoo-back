@@ -25,6 +25,9 @@ public class Usuario {
     @OneToMany(mappedBy = "usuario")
     private List<Partitura> partituras;
 
+    public void agregarPartitura(Partitura partitura) {
+        this.partituras.add(partitura);
+    }
 
     public void setNombre(String nombre) {
         this.nombre = nombre;
