@@ -1,5 +1,6 @@
 package kazoo.controller;
 
+import kazoo.excepciones.UsuarioNoEncontradoException;
 import kazoo.model.Partitura;
 import kazoo.service.PartituraService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +17,13 @@ public class PartituraController {
 
     @PostMapping(path = Endpoints.Partitura.PARTITURA_BASE)
     public ResponseEntity guardarPartitura(@RequestHeader("usuario-nombre") String usuarioNombre, @RequestBody Partitura partitura) {
-        partituraService.guardarPartitura(usuarioNombre, partitura);
-        return new ResponseEntity(HttpStatus.OK);
+        try {
+            partituraService.guardarPartitura(usuarioNombre, partitura);
+            return new ResponseEntity(HttpStatus.OK);
+        } catch (UsuarioNoEncontradoException ex) {
+            return new ResponseEntity(ex.toString(), HttpStatus.BAD_REQUEST);
+        } catch (Exception ex) {
+            return new ResponseEntity("Error inesperado", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }
