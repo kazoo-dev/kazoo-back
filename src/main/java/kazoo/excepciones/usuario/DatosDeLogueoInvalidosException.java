@@ -1,4 +1,4 @@
-package kazoo.excepciones;
+package kazoo.excepciones.usuario;
 
 public class DatosDeLogueoInvalidosException extends RuntimeException{
 
