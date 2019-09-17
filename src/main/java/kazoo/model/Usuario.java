@@ -22,8 +22,7 @@ public class Usuario {
     @JsonIgnore
     private byte[] salt;
 
-
-    @OneToMany(mappedBy="partitura_id",cascade = CascadeType.ALL)
+    @OneToMany(mappedBy="usuario",cascade = CascadeType.ALL)
     private List<Partitura> partituras;
 
     public void setNombre(String nombre) {
@@ -71,6 +70,7 @@ public class Usuario {
         if(partituras.isEmpty()){
             partituras = new ArrayList<>();
         }
+        partitura.setUsuario(this);
         partituras.add(partitura);
     }
 }

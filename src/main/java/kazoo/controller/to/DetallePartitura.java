@@ -1,29 +1,35 @@
-package kazoo.model;
+package kazoo.controller.to;
 
+import kazoo.model.Compas;
+import kazoo.model.Partitura;
 
-import javax.persistence.*;
 import java.util.List;
 
-@Entity
-public class Partitura {
+public class DetallePartitura {
 
-    @Id
-    @GeneratedValue(strategy=GenerationType.AUTO)
     private Long partitura_id;
-
     private String tonalidad;
     private String numerador;
     private String denominador;
     private String nombre;
-
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "partitura_id")
-    @OrderBy("compas_id")
     private List<Compas> compases;
 
-    @ManyToOne
-    @JoinColumn(name="id")
-    private Usuario usuario;
+    public DetallePartitura(Partitura partitura) {
+        this.partitura_id = partitura.getPartitura_id();
+        this.tonalidad = partitura.getTonalidad();
+        this.numerador = partitura.getNumerador();
+        this.denominador = partitura.getDenominador();
+        this.nombre = partitura.getNombre();
+        this.compases = partitura.getCompases();
+    }
+
+    public Long getPartitura_id() {
+        return partitura_id;
+    }
+
+    public void setPartitura_id(Long partitura_id) {
+        this.partitura_id = partitura_id;
+    }
 
     public String getTonalidad() {
         return tonalidad;
@@ -63,21 +69,5 @@ public class Partitura {
 
     public void setCompases(List<Compas> compases) {
         this.compases = compases;
-    }
-
-    public Usuario getUsuario() {
-        return usuario;
-    }
-
-    public void setUsuario(Usuario usuario) {
-        this.usuario = usuario;
-    }
-
-    public Long getPartitura_id() {
-        return partitura_id;
-    }
-
-    public void setPartitura_id(Long partitura_id) {
-        this.partitura_id = partitura_id;
     }
 }

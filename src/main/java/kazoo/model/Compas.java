@@ -10,13 +10,10 @@ public class Compas {
     @GeneratedValue(strategy= GenerationType.AUTO)
     private Long compas_id;
 
-    @OneToMany(mappedBy="nota_id",cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "compas_id")
     @OrderBy("nota_id")
     private List<Nota> notas;
-
-    @ManyToOne
-    @JoinColumn(name="partitura_id", nullable=false)
-    private Partitura partitura;
 
     public List<Nota> getNotas() {
         return notas;
@@ -34,13 +31,6 @@ public class Compas {
         this.compas_id = compas_id;
     }
 
-    public Partitura getPartitura() {
-        return partitura;
-    }
-
-    public void setPartitura(Partitura partitura) {
-        this.partitura = partitura;
-    }
 
 
 }

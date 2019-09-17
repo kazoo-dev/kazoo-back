@@ -1,6 +1,6 @@
 create table if not exists usuario
 (
-	partitura_id bigint not null
+	id bigint not null
 		constraint usuario_pkey
 			primary key,
 	clave varchar(255) not null,

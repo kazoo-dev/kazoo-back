@@ -1,7 +1,7 @@
 package kazoo.service;
 
-import kazoo.excepciones.DatosDeLogueoInvalidosException;
-import kazoo.excepciones.DatosDeRegistracionInvalidosException;
+import kazoo.excepciones.usuario.DatosDeLogueoInvalidosException;
+import kazoo.excepciones.usuario.DatosDeRegistracionInvalidosException;
 import kazoo.model.Sesion;
 import kazoo.model.Usuario;
 import kazoo.repository.UsuarioRepository;

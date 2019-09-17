@@ -1,6 +1,9 @@
 package kazoo.model;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 
 @Entity
 public class Nota {
@@ -9,15 +12,11 @@ public class Nota {
     @GeneratedValue(strategy= GenerationType.AUTO)
     private Long nota_id;
     private String pitch;
-    private String duracion;
+    private String duration;
     private Boolean has_tie;
     private Boolean has_dot;
     private Integer clarity;
     private Integer error;
-
-    @ManyToOne
-    @JoinColumn(name="compas_id", nullable=false)
-    private Compas compas;
 
 
     public String getPitch() {
@@ -28,12 +27,12 @@ public class Nota {
         this.pitch = pitch;
     }
 
-    public String getDuracion() {
-        return duracion;
+    public String getDuration() {
+        return duration;
     }
 
-    public void setDuracion(String duracion) {
-        this.duracion = duracion;
+    public void setDuration(String duration) {
+        this.duration = duration;
     }
 
     public Boolean getHas_tie() {
@@ -76,11 +75,4 @@ public class Nota {
         this.nota_id = nota_id;
     }
 
-    public Compas getCompas() {
-        return compas;
-    }
-
-    public void setCompas(Compas compas) {
-        this.compas = compas;
-    }
 }
