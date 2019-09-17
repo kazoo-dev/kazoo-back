@@ -7,4 +7,9 @@ public class Endpoints {
         public static final String REGISTRAR = AUTENTICACION_BASE + "/registrar";
         public static final String LOGIN = AUTENTICACION_BASE + "/login";
     }
+
+    public class Partitura {
+        public static final String PARTITURA_BASE = "/partitura";
+        public static final String PARTITURA = PARTITURA_BASE + "/{id}";
+    }
 }
