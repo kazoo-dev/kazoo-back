@@ -1,0 +1,24 @@
+version: '3'
+
+services:
+  adminer:
+      image: adminer
+      ports:
+        - 8000:8080
+  spring:
+    build: .
+    depends_on:
+      - postgres
+    ports:
+      - 8080:8080
+  postgres:
+    image: 'postgres:11-alpine'
+    environment:
+      - POSTGRES_DB=kazoo
+      - POSTGRES_USER=kazoo
+      - POSTGRES_PASSWORD=musica
+    volumes:
+      - ./postgres-data:/var/lib/postgresql/data
+      - ./src/main/resources/migration:/docker-entrypoint-initdb.d/
+    # ports:
+    #   - 5432:5432

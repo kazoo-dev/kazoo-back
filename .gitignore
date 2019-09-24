@@ -26,3 +26,6 @@ hs_err_pid*
 *.iml
 misc.xml
 vcs.xml
+
+target/
+postgres-data/
