@@ -8,6 +8,7 @@ import kazoo.model.Partitura;
 import kazoo.model.Usuario;
 import kazoo.repository.PartituraRepository;
 import kazoo.repository.UsuarioRepository;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -38,21 +39,32 @@ public class PartituraService {
     }
 
     public DetallePartitura getPartitura(String nombreUsuario, String partituraId) {
-        Usuario usuario = getUsuario(nombreUsuario);
-        Partitura partitura = partituraRepository.findById(Long.parseLong(partituraId))
-                .orElseThrow(() -> new PartituraNoEncontradaException("No existe la partitura seleccionada"));
-        validarPartitura(usuario,partitura);
+
+        Partitura partitura = validarPartitura(nombreUsuario,Long.parseLong(partituraId));
         return new DetallePartitura(partitura);
     }
 
-    private void validarPartitura(Usuario usuario, Partitura partitura) {
+    private Partitura validarPartitura(String nombreUsuario, Long id) {
+        Partitura partitura = partituraRepository.findById(id)
+                .orElseThrow(() -> new PartituraNoEncontradaException("No existe la partitura seleccionada"));
+        Usuario usuario = getUsuario(nombreUsuario);
+
         if(!partitura.getUsuario().equals(usuario)){
             throw new PartituraNoEncontradaException("No existe la partitura par el usuario solicitado");
         }
+
+        return partitura;
     }
 
     private Usuario getUsuario(String nombreUsuario) {
         return usuarioRepository.findByNombre(nombreUsuario)
                 .orElseThrow(() -> new DatosDeLogueoInvalidosException("No existe el usuario"));
+    }
+
+    public void guardarPartitura(String nombreUsuario, Partitura partituraRecibida) {
+        Partitura partitura = validarPartitura(nombreUsuario, partituraRecibida.getPartitura_id());
+        //Copia todas las propiedades modificadas de la partitura menos el usuario que llega con null
+        BeanUtils.copyProperties(partituraRecibida, partitura, "usuario");
+        partituraRepository.save(partitura);
     }
 }
