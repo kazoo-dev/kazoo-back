@@ -31,4 +31,9 @@ public class PartituraController {
     public DetallePartitura getPartitura(@RequestHeader("usuario-nombre") String nombreUsuario, @PathVariable String id){
         return partituraService.getPartitura(nombreUsuario, id);
     }
+
+    @PutMapping(path = Endpoints.Partitura.PARTITURA_BASE)
+    public void guardarPartitura(@RequestHeader("usuario-nombre") String nombreUsuario, @RequestBody Partitura partitura){
+        partituraService.guardarPartitura(nombreUsuario, partitura);
+    }
 }
