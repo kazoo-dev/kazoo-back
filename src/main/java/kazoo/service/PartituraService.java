@@ -47,6 +47,25 @@ public class PartituraService {
 
     }
 
+    public void guardarPartitura(String nombreUsuario, Partitura partituraRecibida) {
+        Partitura partituraEncontrada = getPartitura(partituraRecibida.getPartitura_id());
+
+        if (perteneceAlUsuario(partituraEncontrada, nombreUsuario)) {
+            //Copia todas las propiedades modificadas de la partitura menos el usuario que llega con null
+            BeanUtils.copyProperties(partituraRecibida, partituraEncontrada, "usuario");
+            partituraRepository.save(partituraEncontrada);
+        } else throw new PartituraNoEncontradaException("No existe la partitura para el usuario solicitado");
+    }
+
+    public void marcarPartituraComoPublica(String nombreUsuario, Long partituraId) {
+        Partitura partituraEncontrada = getPartitura(partituraId);
+
+        if (perteneceAlUsuario(partituraEncontrada, nombreUsuario)) {
+            partituraEncontrada.setEsPublica(true);
+            partituraRepository.save(partituraEncontrada);
+        } else throw new PartituraNoEncontradaException("El usuario no tiene permiso para publicar esta partitura");
+    }
+
     private Boolean perteneceAlUsuario(Partitura partitura, String nombreUsuario) {
         Usuario usuario = getUsuario(nombreUsuario);
 
@@ -61,15 +80,5 @@ public class PartituraService {
     private Usuario getUsuario(String nombreUsuario) {
         return usuarioRepository.findByNombre(nombreUsuario)
                 .orElseThrow(() -> new DatosDeLogueoInvalidosException("No existe el usuario"));
-    }
-
-    public void guardarPartitura(String nombreUsuario, Partitura partituraRecibida) {
-        Partitura partituraEncontrada = getPartitura(partituraRecibida.getPartitura_id());
-
-        if (perteneceAlUsuario(partituraEncontrada, nombreUsuario)) {
-            //Copia todas las propiedades modificadas de la partitura menos el usuario que llega con null
-            BeanUtils.copyProperties(partituraRecibida, partituraEncontrada, "usuario");
-            partituraRepository.save(partituraEncontrada);
-        } else throw new PartituraNoEncontradaException("No existe la partitura para el usuario solicitado");
     }
 }

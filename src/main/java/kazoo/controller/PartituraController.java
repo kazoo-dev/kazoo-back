@@ -36,4 +36,10 @@ public class PartituraController {
     public void guardarPartitura(@RequestHeader("usuario-nombre") String nombreUsuario, @RequestBody Partitura partitura){
         partituraService.guardarPartitura(nombreUsuario, partitura);
     }
+
+    //Esto no es restful ni en pedo, se aceptan sugerencias
+    @PostMapping(path = Endpoints.Partitura.PARTITURA_BASE + "/publicar")
+    public void publicarPartitura(@RequestHeader("usuario-nombre") String nombreUsuario, @RequestParam Long partituraId) {
+        partituraService.marcarPartituraComoPublica(nombreUsuario, partituraId);
+    }
 }
