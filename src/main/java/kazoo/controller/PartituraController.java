@@ -28,7 +28,7 @@ public class PartituraController {
     }
 
     @GetMapping(path = Endpoints.Partitura.PARTITURA)
-    public DetallePartitura getPartitura(@RequestHeader("usuario-nombre") String nombreUsuario, @PathVariable String id){
+    public DetallePartitura getPartitura(@RequestHeader(value = "usuario-nombre", required = false) String nombreUsuario, @PathVariable String id) {
         return partituraService.getPartitura(nombreUsuario, id);
     }
 
