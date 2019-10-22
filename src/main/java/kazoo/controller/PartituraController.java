@@ -38,7 +38,7 @@ public class PartituraController {
     }
 
     //Esto no es restful ni en pedo, se aceptan sugerencias
-    @PostMapping(path = Endpoints.Partitura.PARTITURA_BASE + "/publicar")
+    @PostMapping(path = Endpoints.Partitura.PUBLICAR)
     public void publicarPartitura(@RequestHeader("usuario-nombre") String nombreUsuario, @RequestParam Long partituraId) {
         partituraService.marcarPartituraComoPublica(nombreUsuario, partituraId);
     }

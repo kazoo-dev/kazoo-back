@@ -11,5 +11,6 @@ public class Endpoints {
     public class Partitura {
         public static final String PARTITURA_BASE = "/partitura";
         public static final String PARTITURA = PARTITURA_BASE + "/{id}";
+        public static final String PUBLICAR = PARTITURA_BASE + "/publicar";
     }
 }
