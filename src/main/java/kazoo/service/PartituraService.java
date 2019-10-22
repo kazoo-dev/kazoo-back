@@ -39,32 +39,46 @@ public class PartituraService {
     }
 
     public DetallePartitura getPartitura(String nombreUsuario, String partituraId) {
+        Partitura partitura = getPartitura(Long.parseLong(partituraId));
 
-        Partitura partitura = validarPartitura(nombreUsuario,Long.parseLong(partituraId));
-        return new DetallePartitura(partitura);
+        if (partitura.getEsPublica() || perteneceAlUsuario(partitura, nombreUsuario)) {
+            return new DetallePartitura(partitura);
+        } else throw new PartituraNoEncontradaException("Partitura no accesible");
+
     }
 
-    private Partitura validarPartitura(String nombreUsuario, Long id) {
-        Partitura partitura = partituraRepository.findById(id)
-                .orElseThrow(() -> new PartituraNoEncontradaException("No existe la partitura seleccionada"));
+    public void guardarPartitura(String nombreUsuario, Partitura partituraRecibida) {
+        Partitura partituraEncontrada = getPartitura(partituraRecibida.getPartitura_id());
+
+        if (perteneceAlUsuario(partituraEncontrada, nombreUsuario)) {
+            //Copia todas las propiedades modificadas de la partitura menos el usuario que llega con null
+            BeanUtils.copyProperties(partituraRecibida, partituraEncontrada, "usuario");
+            partituraRepository.save(partituraEncontrada);
+        } else throw new PartituraNoEncontradaException("No existe la partitura para el usuario solicitado");
+    }
+
+    public void marcarPartituraComoPublica(String nombreUsuario, Long partituraId) {
+        Partitura partituraEncontrada = getPartitura(partituraId);
+
+        if (perteneceAlUsuario(partituraEncontrada, nombreUsuario)) {
+            partituraEncontrada.setEsPublica(true);
+            partituraRepository.save(partituraEncontrada);
+        } else throw new PartituraNoEncontradaException("El usuario no tiene permiso para publicar esta partitura");
+    }
+
+    private Boolean perteneceAlUsuario(Partitura partitura, String nombreUsuario) {
         Usuario usuario = getUsuario(nombreUsuario);
 
-        if(!partitura.getUsuario().equals(usuario)){
-            throw new PartituraNoEncontradaException("No existe la partitura par el usuario solicitado");
-        }
+        return partitura.getUsuario().equals(usuario);
+    }
 
-        return partitura;
+    private Partitura getPartitura(Long id) {
+        return partituraRepository.findById(id)
+                .orElseThrow(() -> new PartituraNoEncontradaException("No existe la partitura seleccionada"));
     }
 
     private Usuario getUsuario(String nombreUsuario) {
         return usuarioRepository.findByNombre(nombreUsuario)
                 .orElseThrow(() -> new DatosDeLogueoInvalidosException("No existe el usuario"));
-    }
-
-    public void guardarPartitura(String nombreUsuario, Partitura partituraRecibida) {
-        Partitura partitura = validarPartitura(nombreUsuario, partituraRecibida.getPartitura_id());
-        //Copia todas las propiedades modificadas de la partitura menos el usuario que llega con null
-        BeanUtils.copyProperties(partituraRecibida, partitura, "usuario");
-        partituraRepository.save(partitura);
     }
 }

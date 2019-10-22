@@ -28,12 +28,18 @@ public class PartituraController {
     }
 
     @GetMapping(path = Endpoints.Partitura.PARTITURA)
-    public DetallePartitura getPartitura(@RequestHeader("usuario-nombre") String nombreUsuario, @PathVariable String id){
+    public DetallePartitura getPartitura(@RequestHeader(value = "usuario-nombre", required = false) String nombreUsuario, @PathVariable String id) {
         return partituraService.getPartitura(nombreUsuario, id);
     }
 
     @PutMapping(path = Endpoints.Partitura.PARTITURA_BASE)
     public void guardarPartitura(@RequestHeader("usuario-nombre") String nombreUsuario, @RequestBody Partitura partitura){
         partituraService.guardarPartitura(nombreUsuario, partitura);
+    }
+
+    //Esto no es restful ni en pedo, se aceptan sugerencias
+    @PostMapping(path = Endpoints.Partitura.PUBLICAR)
+    public void publicarPartitura(@RequestHeader("usuario-nombre") String nombreUsuario, @RequestParam Long partituraId) {
+        partituraService.marcarPartituraComoPublica(nombreUsuario, partituraId);
     }
 }
