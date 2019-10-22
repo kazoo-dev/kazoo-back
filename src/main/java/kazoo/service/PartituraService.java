@@ -81,4 +81,15 @@ public class PartituraService {
         return usuarioRepository.findByNombre(nombreUsuario)
                 .orElseThrow(() -> new DatosDeLogueoInvalidosException("No existe el usuario"));
     }
+
+    public void eliminarPartitura(String nombreUsuario, String partituraId) {
+        Long idPartitura = Long.parseLong(partituraId);
+        validarPartituraYUsuario(nombreUsuario, idPartitura);
+        partituraRepository.deleteById(idPartitura);
+    }
+
+    private void validarPartituraYUsuario(String nombreUsuario, Long partituraId) {
+        getUsuario(nombreUsuario);
+        getPartitura(partituraId);
+    }
 }

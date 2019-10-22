@@ -42,4 +42,9 @@ public class PartituraController {
     public void publicarPartitura(@RequestHeader("usuario-nombre") String nombreUsuario, @RequestParam Long partituraId) {
         partituraService.marcarPartituraComoPublica(nombreUsuario, partituraId);
     }
+
+    @DeleteMapping(path = Endpoints.Partitura.PARTITURA)
+    public void publicarPartitura(@RequestHeader("usuario-nombre") String nombreUsuario, @PathVariable String id) {
+        partituraService.eliminarPartitura(nombreUsuario, id);
+    }
 }
