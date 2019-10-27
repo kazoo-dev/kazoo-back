@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static java.util.stream.Collectors.toList;
 
@@ -28,7 +29,9 @@ public class PartituraService {
 
     public void crearPartitura(String usuarioNombre, Partitura partitura) {
         Usuario usuario = getUsuario(usuarioNombre);
-        usuario.agregarPartitura(partitura);
+        Optional<Partitura> partituraEncontrada = partituraRepository.findById(partitura.getPartitura_id());
+        Partitura partituraACrear = obtenerPartituraACrear(usuario, partitura, partituraEncontrada);
+        usuario.agregarPartitura(partituraACrear);
         usuarioRepository.save(usuario);
     }
 
@@ -61,6 +64,14 @@ public class PartituraService {
         Partitura partituraEncontrada = getPartitura(partituraId);
         partituraEncontrada.setEsPublica(true);
         partituraRepository.save(partituraEncontrada);
+    }
+
+    private Partitura obtenerPartituraACrear(Usuario usuario, Partitura partitura, Optional<Partitura> partituraEncontrada) {
+        if (partituraEncontrada.isPresent() && !partituraPerteneceAlUsuario(partituraEncontrada.get(), usuario)) {
+            return Partitura.copiarDesde(partitura);
+        } else {
+            return partitura;
+        }
     }
 
     private Boolean partituraPerteneceAlUsuario(Partitura partitura, Usuario usuario) {
