@@ -30,19 +30,8 @@ public class PartituraService {
     public void crearPartitura(String usuarioNombre, Partitura partitura) {
         Usuario usuario = getUsuario(usuarioNombre);
         Optional<Partitura> partituraEncontrada = partituraRepository.findById(partitura.getPartitura_id());
-        if (partituraEncontrada.isPresent() && !partituraPerteneceAlUsuario(partituraEncontrada.get(), usuario)) {
-            Partitura copiaDePartitura = new Partitura();
-
-            copiaDePartitura.setCompases(partitura.getCompases());
-            copiaDePartitura.setNumerador(partitura.getNumerador());
-            copiaDePartitura.setDenominador(partitura.getDenominador());
-            copiaDePartitura.setTonalidad(partitura.getTonalidad());
-            copiaDePartitura.setNombre(partitura.getNombre());
-
-            usuario.agregarPartitura(copiaDePartitura);
-        } else {
-            usuario.agregarPartitura(partitura);
-        }
+        Partitura partituraACrear = obtenerPartituraACrear(usuario, partitura, partituraEncontrada);
+        usuario.agregarPartitura(partituraACrear);
         usuarioRepository.save(usuario);
     }
 
@@ -75,6 +64,14 @@ public class PartituraService {
         Partitura partituraEncontrada = getPartitura(partituraId);
         partituraEncontrada.setEsPublica(true);
         partituraRepository.save(partituraEncontrada);
+    }
+
+    private Partitura obtenerPartituraACrear(Usuario usuario, Partitura partitura, Optional<Partitura> partituraEncontrada) {
+        if (partituraEncontrada.isPresent() && !partituraPerteneceAlUsuario(partituraEncontrada.get(), usuario)) {
+            return Partitura.copiarDesde(partitura);
+        } else {
+            return partitura;
+        }
     }
 
     private Boolean partituraPerteneceAlUsuario(Partitura partitura, Usuario usuario) {
