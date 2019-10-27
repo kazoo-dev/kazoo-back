@@ -39,9 +39,9 @@ public class PartituraService {
     }
 
     public DetallePartitura getPartitura(String nombreUsuario, String partituraId) {
-        validarPartituraYUsuario(nombreUsuario, Long.parseLong(partituraId));
         Partitura partitura = getPartitura(Long.parseLong(partituraId));
-        if (partitura.getEsPublica()) {
+
+        if (partitura.getEsPublica() || partituraPerteneceAlUsuario(partitura, getUsuario(nombreUsuario))) {
             return new DetallePartitura(partitura);
         } else throw new PartituraNoEncontradaException("Partitura no accesible");
 
@@ -63,9 +63,8 @@ public class PartituraService {
         partituraRepository.save(partituraEncontrada);
     }
 
-    private void partituraPerteneceAlUsuario(Partitura partitura, Usuario usuario) {
-        if(!partitura.getUsuario().equals(usuario))
-            throw new PartituraNoEncontradaException("El usuario no tiene permisos para manipular esta partitura");
+    private Boolean partituraPerteneceAlUsuario(Partitura partitura, Usuario usuario) {
+        return partitura.getUsuario().equals(usuario);
     }
 
     private Partitura getPartitura(Long id) {
@@ -88,6 +87,8 @@ public class PartituraService {
     private void validarPartituraYUsuario(String nombreUsuario, Long partituraId) {
         Usuario usuario = getUsuario(nombreUsuario);
         Partitura partitura = getPartitura(partituraId);
-        partituraPerteneceAlUsuario(partitura, usuario);
+        if (!partituraPerteneceAlUsuario(partitura, usuario)) {
+            throw new PartituraNoEncontradaException("El usuario no tiene permisos para manipular esta partitura");
+        }
     }
 }

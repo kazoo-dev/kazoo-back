@@ -44,7 +44,7 @@ public class PartituraController {
     }
 
     @DeleteMapping(path = Endpoints.Partitura.PARTITURA)
-    public void publicarPartitura(@RequestHeader("usuario-nombre") String nombreUsuario, @PathVariable String id) {
+    public void eliminarPartitura(@RequestHeader("usuario-nombre") String nombreUsuario, @PathVariable String id) {
         partituraService.eliminarPartitura(nombreUsuario, id);
     }
 }
