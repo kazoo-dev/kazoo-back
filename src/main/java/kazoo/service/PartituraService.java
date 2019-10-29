@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static java.util.stream.Collectors.toList;
 
@@ -28,7 +29,9 @@ public class PartituraService {
 
     public void crearPartitura(String usuarioNombre, Partitura partitura) {
         Usuario usuario = getUsuario(usuarioNombre);
-        usuario.agregarPartitura(partitura);
+        Optional<Partitura> partituraEncontrada = partituraRepository.findById(partitura.getPartitura_id());
+        Partitura partituraACrear = obtenerPartituraACrear(usuario, partitura, partituraEncontrada);
+        usuario.agregarPartitura(partituraACrear);
         usuarioRepository.save(usuario);
     }
 
@@ -39,21 +42,45 @@ public class PartituraService {
     }
 
     public DetallePartitura getPartitura(String nombreUsuario, String partituraId) {
+        Partitura partitura = getPartitura(Long.parseLong(partituraId));
 
-        Partitura partitura = validarPartitura(nombreUsuario,Long.parseLong(partituraId));
-        return new DetallePartitura(partitura);
+        if (partitura.getEsPublica() || partituraPerteneceAlUsuario(partitura, getUsuario(nombreUsuario))) {
+            return new DetallePartitura(partitura);
+        } else throw new PartituraNoEncontradaException("Partitura no accesible");
+
     }
 
-    private Partitura validarPartitura(String nombreUsuario, Long id) {
-        Partitura partitura = partituraRepository.findById(id)
-                .orElseThrow(() -> new PartituraNoEncontradaException("No existe la partitura seleccionada"));
-        Usuario usuario = getUsuario(nombreUsuario);
+    public void guardarPartitura(String nombreUsuario, Partitura partituraRecibida) {
+        validarPartituraYUsuario(nombreUsuario, partituraRecibida.getPartitura_id());
+        Partitura partituraEncontrada = getPartitura(partituraRecibida.getPartitura_id());
+        //Copia todas las propiedades modificadas de la partitura menos el usuario que llega con null
+        BeanUtils.copyProperties(partituraRecibida, partituraEncontrada, "usuario");
+        partituraRepository.save(partituraEncontrada);
 
-        if(!partitura.getUsuario().equals(usuario)){
-            throw new PartituraNoEncontradaException("No existe la partitura par el usuario solicitado");
+    }
+
+    public void marcarPartituraComoPublica(String nombreUsuario, Long partituraId) {
+        validarPartituraYUsuario(nombreUsuario, partituraId);
+        Partitura partituraEncontrada = getPartitura(partituraId);
+        partituraEncontrada.setEsPublica(true);
+        partituraRepository.save(partituraEncontrada);
+    }
+
+    private Partitura obtenerPartituraACrear(Usuario usuario, Partitura partitura, Optional<Partitura> partituraEncontrada) {
+        if (partituraEncontrada.isPresent() && !partituraPerteneceAlUsuario(partituraEncontrada.get(), usuario)) {
+            return Partitura.copiarDesde(partitura);
+        } else {
+            return partitura;
         }
+    }
 
-        return partitura;
+    private Boolean partituraPerteneceAlUsuario(Partitura partitura, Usuario usuario) {
+        return partitura.getUsuario().equals(usuario);
+    }
+
+    private Partitura getPartitura(Long id) {
+        return partituraRepository.findById(id)
+                .orElseThrow(() -> new PartituraNoEncontradaException("No existe la partitura seleccionada"));
     }
 
     private Usuario getUsuario(String nombreUsuario) {
@@ -61,10 +88,18 @@ public class PartituraService {
                 .orElseThrow(() -> new DatosDeLogueoInvalidosException("No existe el usuario"));
     }
 
-    public void guardarPartitura(String nombreUsuario, Partitura partituraRecibida) {
-        Partitura partitura = validarPartitura(nombreUsuario, partituraRecibida.getPartitura_id());
-        //Copia todas las propiedades modificadas de la partitura menos el usuario que llega con null
-        BeanUtils.copyProperties(partituraRecibida, partitura, "usuario");
-        partituraRepository.save(partitura);
+    public void eliminarPartitura(String nombreUsuario, String partituraId) {
+        Long idPartitura = Long.parseLong(partituraId);
+        validarPartituraYUsuario(nombreUsuario, idPartitura);
+        partituraRepository.deleteById(idPartitura);
+    }
+
+
+    private void validarPartituraYUsuario(String nombreUsuario, Long partituraId) {
+        Usuario usuario = getUsuario(nombreUsuario);
+        Partitura partitura = getPartitura(partituraId);
+        if (!partituraPerteneceAlUsuario(partitura, usuario)) {
+            throw new PartituraNoEncontradaException("El usuario no tiene permisos para manipular esta partitura");
+        }
     }
 }

@@ -15,6 +15,7 @@ public class Partitura {
     private String numerador;
     private String denominador;
     private String nombre;
+    private Boolean esPublica = false;
 
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "partitura_id")
@@ -24,6 +25,18 @@ public class Partitura {
     @ManyToOne
     @JoinColumn(name="id")
     private Usuario usuario;
+
+    public static Partitura copiarDesde(Partitura partitura) {
+        Partitura nuevaPartitura = new Partitura();
+
+        nuevaPartitura.setCompases(partitura.getCompases());
+        nuevaPartitura.setNumerador(partitura.getNumerador());
+        nuevaPartitura.setDenominador(partitura.getDenominador());
+        nuevaPartitura.setTonalidad(partitura.getTonalidad());
+        nuevaPartitura.setNombre(partitura.getNombre());
+
+        return nuevaPartitura;
+    }
 
     public String getTonalidad() {
         return tonalidad;
@@ -79,5 +92,13 @@ public class Partitura {
 
     public void setPartitura_id(Long partitura_id) {
         this.partitura_id = partitura_id;
+    }
+
+    public Boolean getEsPublica() {
+        return esPublica;
+    }
+
+    public void setEsPublica(Boolean esPublica) {
+        this.esPublica = esPublica;
     }
 }
